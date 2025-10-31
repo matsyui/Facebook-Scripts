@@ -72,12 +72,10 @@ The script will automatically unfollow everyone in view, scroll, and continue un
         const unfollowRadio = Array.from(dialog.querySelectorAll('div[role="radio"]'))
         .find((el) => el.textContent.includes('Unfollow'));
         if (unfollowRadio) unfollowRadio.click();
-        else return false;
 
         const unlikeButton = Array.from(document.querySelectorAll('div[role="button"], input[role="switch"]'))
         .find((el) => el.textContent.includes('Unlike this Page') || el.getAttribute('aria-label') === 'Unlike');
         if(unlikeButton) unlikeButton.click();
-        else return false;
 
         await wait(800);
 
