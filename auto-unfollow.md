@@ -1,7 +1,7 @@
 # 🚫 Facebook Auto Unfollow Script
 
 This script automatically **unfollows all profiles or pages** you’re currently following on Facebook.  
-It scrolls through your following list, hovers on each profile, opens the follow options, and clicks **Unfollow** — all automatically.  
+It scrolls through your following list, hovers on each profile, opens the follow options, and clicks **Unfollow** — all automatically.
 
 ---
 
@@ -10,14 +10,14 @@ It scrolls through your following list, hovers on each profile, opens the follow
 1. **Go to your following list:**  
    👉 [https://facebook.com/yourusername/following](https://facebook.com/yourusername/following)
 
-   *(Or navigate manually: Profile → “Friends” → “Following” tab)*
+   _(Or navigate manually: Profile → “Friends” → “Following” tab)_
 
 2. **Scroll a bit** so Facebook loads your following list.
 3. **Open your browser console:**
    - Windows: `Ctrl + Shift + J`
    - Mac: `Cmd + Option + J`
 4. **Paste** the script below into the console.
-5. Press **Enter** and let it run 🚀  
+5. Press **Enter** and let it run 🚀
 
 The script will automatically unfollow everyone in view, scroll, and continue until the list is empty.
 
@@ -54,54 +54,79 @@ The script will automatically unfollow everyone in view, scroll, and continue un
   }
 
   async function tryUnfollow(hoverContainer) {
+    // 🟦 Case 1: Direct "Unfollow" button in hover card
     const directBtn = hoverContainer.querySelector('div[role="button"][aria-label="Unfollow"]');
     if (directBtn) {
       directBtn.click();
+      console.log('%c[✅ Unfollowed]%c Directly from hover menu', 'color:green;', 'color:white;');
       return true;
     }
 
-    const followingBtn = hoverContainer.querySelector('div[role="button"][aria-label="Following"]') ||hoverContainer.querySelector('div[role="button"][aria-label="Liked"]')  ;
+    // 🟨 Case 2: "Following" or "Liked" → Open dialog → Unfollow + Unlike
+    const followingBtn =
+      hoverContainer.querySelector('div[role="button"][aria-label="Following"]') ||
+      hoverContainer.querySelector('div[role="button"][aria-label="Liked"]');
+
     if (followingBtn) {
+      followingBtn.click();
+      await wait(SHORT_FIXED_PAUSE);
 
-        followingBtn.click();
-        await wait(SHORT_FIXED_PAUSE);
+      const dialog = await waitForElement('div[role="dialog"]', 6000);
+      if (!dialog) {
+        console.warn('[❌ Fail] Follow settings dialog not found.');
+        return false;
+      }
 
-        const dialog = await waitForElement('div[role="dialog"]', 6000);
-        if (!dialog) return false;
+      console.log('%c[🧭 Dialog detected]%c Proceeding to unfollow + unlike...', 'color:#00B0FF;', 'color:white;');
 
-        const unfollowRadio = Array.from(dialog.querySelectorAll('div[role="radio"]'))
+      // Step 1: Select "Unfollow" radio
+      const unfollowRadio = Array.from(dialog.querySelectorAll('div[role="radio"]'))
         .find((el) => el.textContent.includes('Unfollow'));
-        if (unfollowRadio) unfollowRadio.click();
+      if (unfollowRadio) {
+        unfollowRadio.click();
+        console.log('✅ Unfollow radio selected.');
+        await wait(400);
+      }
 
-        const unlikeButton = Array.from(document.querySelectorAll('div[role="button"], input[role="switch"]'))
+      // Step 2: Toggle "Unlike this Page" (handles both div + input cases)
+      const unlikeButton = Array.from(document.querySelectorAll('div[role="button"], input[role="switch"]'))
         .find((el) => el.textContent.includes('Unlike this Page') || el.getAttribute('aria-label') === 'Unlike');
-        if(unlikeButton) unlikeButton.click();
+      if (unlikeButton) {
+        unlikeButton.click();
+        console.log('✅ Unlike this Page toggled.');
+        await wait(400);
+      }
 
-        await wait(800);
-
-        const updateBtn = Array.from(dialog.querySelectorAll('div[role="button"]'))
+      // Step 3: Click "Update"
+      const updateBtn = Array.from(dialog.querySelectorAll('div[role="button"], button'))
         .find((el) => el.textContent.trim() === 'Update');
-        if (updateBtn) {
+      if (updateBtn) {
         updateBtn.click();
+        console.log('💾 Update button clicked.');
         await wait(800);
         return true;
-        }
+      }
 
+      console.warn('[⚠️ Warning] Update button not found.');
       return false;
     }
 
+    // 🟩 Case 3: Fallback – via “Options” dropdown
     const optionsBtn = hoverContainer.querySelector('div[role="button"][aria-label*="Options"]');
     if (optionsBtn) {
       optionsBtn.click();
       await wait(SHORT_FIXED_PAUSE);
+
       const unfollowMenu = Array.from(document.querySelectorAll('div[role="menuitem"]'))
         .find((el) => el.textContent.includes('Unfollow'));
       if (unfollowMenu) {
         unfollowMenu.click();
+        console.log('%c[✅ Unfollowed]%c via Options menu', 'color:green;', 'color:white;');
         return true;
       }
     }
 
+    console.warn('[❌ Fail] No valid unfollow option found.');
     return false;
   }
 
@@ -120,6 +145,7 @@ The script will automatically unfollow everyone in view, scroll, and continue un
       profile.scrollIntoView({ behavior: 'smooth', block: 'center' });
       await wait(500);
 
+      // Hover to trigger profile preview
       link.dispatchEvent(new MouseEvent('mouseover', { bubbles: true, cancelable: true }));
       const hoverContainer = await waitForElement('div[aria-label="Link preview"]');
 
@@ -128,13 +154,8 @@ The script will automatically unfollow everyone in view, scroll, and continue un
         failCount++;
       } else {
         const success = await tryUnfollow(hoverContainer);
-        if (success) {
-          console.log('%c[✅ Success] Unfollowed successfully.', 'color:green;');
-          successCount++;
-        } else {
-          console.warn('[❌ Fail] No valid unfollow option found.');
-          failCount++;
-        }
+        if (success) successCount++;
+        else failCount++;
 
         await wait(500);
 
