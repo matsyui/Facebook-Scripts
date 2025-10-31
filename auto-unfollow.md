@@ -62,26 +62,32 @@ The script will automatically unfollow everyone in view, scroll, and continue un
 
     const followingBtn = hoverContainer.querySelector('div[role="button"][aria-label="Following"]') ||hoverContainer.querySelector('div[role="button"][aria-label="Liked"]')  ;
     if (followingBtn) {
-      followingBtn.click();
-      await wait(SHORT_FIXED_PAUSE);
 
-      const dialog = await waitForElement('div[role="dialog"]', 6000);
-      if (!dialog) return false;
+        followingBtn.click();
+        await wait(SHORT_FIXED_PAUSE);
 
-      const unfollowRadio = Array.from(dialog.querySelectorAll('div[role="radio"]'))
+        const dialog = await waitForElement('div[role="dialog"]', 6000);
+        if (!dialog) return false;
+
+        const unfollowRadio = Array.from(dialog.querySelectorAll('div[role="radio"]'))
         .find((el) => el.textContent.includes('Unfollow'));
-      if (unfollowRadio) unfollowRadio.click();
-      else return false;
+        if (unfollowRadio) unfollowRadio.click();
+        else return false;
 
-      await wait(800);
+        const unlikeButton = Array.from(document.querySelectorAll('div[role="button"], input[role="switch"]'))
+        .find((el) => el.textContent.includes('Unlike this Page') || el.getAttribute('aria-label') === 'Unlike');
+        if(unlikeButton) unlikeButton.click();
+        else return false;
 
-      const updateBtn = Array.from(dialog.querySelectorAll('div[role="button"]'))
+        await wait(800);
+
+        const updateBtn = Array.from(dialog.querySelectorAll('div[role="button"]'))
         .find((el) => el.textContent.trim() === 'Update');
-      if (updateBtn) {
+        if (updateBtn) {
         updateBtn.click();
         await wait(800);
         return true;
-      }
+        }
 
       return false;
     }
