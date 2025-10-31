@@ -60,7 +60,7 @@ The script will automatically unfollow everyone in view, scroll, and continue un
       return true;
     }
 
-    const followingBtn = hoverContainer.querySelector('div[role="button"][aria-label="Following"]');
+    const followingBtn = hoverContainer.querySelector('div[role="button"][aria-label="Following"]') ||hoverContainer.querySelector('div[role="button"][aria-label="Liked"]')  ;
     if (followingBtn) {
       followingBtn.click();
       await wait(SHORT_FIXED_PAUSE);
