@@ -3,6 +3,9 @@
 This script automatically **unfriends all your Facebook friends** from the [Friends List](https://facebook.com/{YOUR_USERNAME}/friends).  
 It clicks each “Friends” button ➜ selects **Unfriend** ➜ confirms it ➜ scrolls ➜ and repeats until your list’s empty.  
 
+<img width="1172" height="754" alt="image" src="https://github.com/user-attachments/assets/453fa67a-dc1d-4aa8-b869-84cb441ea028" />
+
+
 ---
 
 ## ⚙️ How to Use
