@@ -44,10 +44,10 @@ async function smartUnsaveLoop() {
     // if we didn’t find any new ones on screen
     if (items.length === 0) {
       // scroll down a bit to load more saved stuff
-      window.scrollBy(0, 1000);
+      window.scrollBy(0, 3000);
 
       // give Facebook a sec to load more items
-      await delay(1500);
+      await delay(10000);
 
       // if still nothing shows up, we’re probably done unsaving everything
       if (document.querySelectorAll('div[aria-label="More options for saved item"]').length === 0) {
@@ -83,7 +83,7 @@ async function smartUnsaveLoop() {
       }
 
       // small pause before moving to the next one (keeps it smooth)
-      await delay(400);
+      await delay(1000);
     }
   }
 }
