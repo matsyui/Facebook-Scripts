@@ -148,10 +148,11 @@ The script will automatically unfollow everyone in view, scroll, and continue un
       return true;
     }
 
-    // 🟨 Case 2: "Following" or "Liked" → Open dialog → Unfollow + Unlike
+    // 🟨 Case 2: "Following" or "Liked" or "Favorites" → Open dialog → Unfollow + Unlike
     const followingBtn =
       hoverContainer.querySelector('div[role="button"][aria-label="Following"]') ||
-      hoverContainer.querySelector('div[role="button"][aria-label="Liked"]');
+      hoverContainer.querySelector('div[role="button"][aria-label="Liked"]') ||
+      hoverContainer.querySelector('div[role="button"][aria-label="Favorites"]');
 
     if (followingBtn) {
       followingBtn.click();
