@@ -290,6 +290,19 @@ The script will automatically unfollow everyone in view, scroll, and continue un
   );
 })();
 ```
+---
+
+## Required to Edit or Change
+
+- Make sure to update the `div.x78zum5.x1q0g3np.x1a02dak.x1qughib > div`, You can get your own selector element by doing the steps:
+
+1. Right click name then click inspect element
+
+   <img width="544" height="527" alt="image" src="https://github.com/user-attachments/assets/9b4471a1-c43c-46ce-b2f3-e9770d96b9b9" />
+3. Find your selector, Check the screenshot for reference
+   
+   <img width="1416" height="482" alt="image" src="https://github.com/user-attachments/assets/ee7f2337-fb80-4d91-b6cf-a6225028c2f4" />
+
 
 ---
 
@@ -298,5 +311,6 @@ The script will automatically unfollow everyone in view, scroll, and continue un
 - It’s safe to run — it only clicks visible "Unfollow" actions.
 - Facebook’s UI might change anytime, so if it stops working, check for updated selectors.
 - The script logs **success** and **fail** counts in the console.
+- Tweak the intervals to avoid rate-limits
 
 ---
